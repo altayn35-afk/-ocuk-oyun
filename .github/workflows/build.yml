@@ -11,18 +11,31 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Java
+      - name: Python Kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Java Kur
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Build with Buildozer
-        uses: kivy/buildozer-action@v1
-        with:
-          command: android debug
+      - name: Sistem Gereksinimlerini Yükle
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential ccache git libncurses5 libstdc++6 zlib1g python3-dev libffi-dev libssl-dev autoconf automake libtool pkg-config
 
-      - name: Upload APK
+      - name: Buildozer ve Cython Kur
+        run: |
+          pip install --upgrade pip
+          pip install --upgrade "cython<3.0" buildozer==1.5.0
+
+      - name: APK Derle
+        run: buildozer android debug
+
+      - name: APK Dosyasını Kaydet
         uses: actions/upload-artifact@v4
         with:
           name: oyun-apk
